@@ -2,9 +2,9 @@ from flask import Flask, request, redirect
 from twilio.twiml.messaging_response import MessagingResponse
 import search
 
-
 # export FLASK_APP
 app = Flask(__name__)
+
 
 @app.route("/", methods=['GET', 'POST'])
 def sms_reply():
@@ -19,7 +19,7 @@ def sms_reply():
     # Add a message
     if params[0].lower() == 'google':
         result = search.googleSearch(body[7:])
-        resp.message("Here is Google's top result:\n"+result)
+        resp.message("Here is Google's top result:\n" + result)
     elif params[0].lower() == 'translate':
         if len(params) >= 3:
             msg = search.translate(" ".join(params[3:]), params[2].lower())
@@ -32,10 +32,14 @@ def sms_reply():
                          "CODE is the ISO 639-1 code for the message to be translated into "
                          "found at http://www.loc.gov/standards/iso639-2/php/code_list.php "
                          "and TEXT is the message to be translated.")
+    elif params[0].lower() == 'wiki':
+        result = search.wikiSearch(body[5:])
+        resp.message("Information from Wikipedia:\n" + result)
     else:
         resp.message("The Robots are coming! Head for the hills!")
 
     return str(resp)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

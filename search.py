@@ -20,4 +20,14 @@ def translate(query, target):
         result = response.json()['outputs'][0]['output']
     except:
         result = ""
-    return(result)
+    return result
+
+def wikiSearch(query):
+    link = "https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch={}&prop=info&inprop=url&format=json"\
+        .format(query.replace(" ", "_"))
+    result = requests.get(link).json()['query']['search'][0]
+    title = result['title']
+    pid = result['pageid']
+    info = requests.get("https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts"
+                        "&exintro&explaintext&redirects=1&titles={}".format(title)).json()
+    return info['query']['pages'][str(pid)]['extract']
