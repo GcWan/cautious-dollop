@@ -3,13 +3,12 @@ from twilio.twiml.messaging_response import MessagingResponse
 import search
 from game import game
 import os
-import json
+import pickle
 
 
 # Initialize file
-if not os.path.exists('database.json'):
-    with open('database.json', 'w') as file:
-        json.dump({}, file)
+if not os.path.exists('database.pickle'):
+    open('database.pickle', 'x')
 
 # export FLASK_APP
 app = Flask(__name__)
@@ -18,7 +17,7 @@ app = Flask(__name__)
 @app.route("/", methods=['GET', 'POST'])
 def sms_reply():
     # Initialize database
-    database = json.load(open('database.json', 'r'))
+    database = pickle.load(open('database.pickle', 'rb'))
 
     # Respond to incoming calls with a simple text message.
     # Get the message the user sent
@@ -83,8 +82,10 @@ def sms_reply():
             del players[sender]
     else:
         resp.message("The Robots are coming! Head for the hills!")
-    with open('database.json', 'w') as file:
-        json.dump(database, file)
+
+    # Update Database file
+    with open('database.pickle', 'wb') as f:
+        pickle.dump(database, f)
 
     return str(resp)
 

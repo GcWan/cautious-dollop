@@ -3,6 +3,40 @@ import requests
 from bs4 import BeautifulSoup
 from random import choice
 
+import os
+import pickle
+from game import game
+
+'''
+if not os.path.exists('database.pickle'):
+    open('database.pickle', 'x')
+test = {
+    "bob": 98,
+    "steve": 89,
+    "max": 50,
+    "game": game()
+}
+
+test['game'].move(["yes", "George"])
+test['game'].move(["yes", "George"])
+test['game'] = test['game']
+with open('database.pickle', 'wb') as file:
+    pickle.dump(test, file)
+
+database = pickle.load(open('database.pickle', 'rb'))
+print(database)
+print(test['game'].getTurn())
+print(test['game'].name)
+
+database['players'] = {}
+players = database['players']
+players['joying'] = 1
+players['george'] = 100
+players['non'] = 50
+del players['non']
+with open('database.json', 'w') as file:
+    json.dump(database, file)'''
+
 
 def google(query):
     for r in search(query, tld='ca', lang='en', num=1, start=0, stop=1, pause=2.0):
