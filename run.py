@@ -2,17 +2,25 @@ from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 import search
 from game import game
+import os
+import json
+
+
+# Initialize file
+if not os.path.exists('database.json'):
+    with open('database.json', 'w') as file:
+        json.dump({}, file)
 
 # export FLASK_APP
 app = Flask(__name__)
 
-# Initialize variables
-global players
-players = {}
 
 @app.route("/", methods=['GET', 'POST'])
 def sms_reply():
-    """Respond to incoming calls with a simple text message."""
+    # Initialize database
+    database = json.load(open('database.json', 'r'))
+
+    # Respond to incoming calls with a simple text message.
     # Get the message the user sent
     body = request.values.get('Body')
     sender = request.values.get('From')
@@ -65,6 +73,9 @@ def sms_reply():
         else:
             resp.message(search.news(""))
     elif params[0].lower() == 'play':
+        if 'players' not in database:
+            database['players'] = {}
+        players = database['players']
         if sender not in players:
             players[sender] = game()
         resp.message(players[sender].move(params))
@@ -72,6 +83,8 @@ def sms_reply():
             del players[sender]
     else:
         resp.message("The Robots are coming! Head for the hills!")
+    with open('database.json', 'w') as file:
+        json.dump(database, file)
 
     return str(resp)
 
