@@ -30,4 +30,9 @@ def wikiSearch(query):
     pid = result['pageid']
     info = requests.get("https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts"
                         "&exintro&explaintext&redirects=1&titles={}".format(title)).json()
-    return info['query']['pages'][str(pid)]['extract']
+    extract = info['query']['pages'][str(pid)]['extract']
+    if "\n" in extract:
+        extract = extract[:extract.find("\n")]
+    while len(extract) > 1500:
+        extract = extract[:extract.rfind(" ")]
+    return extract
