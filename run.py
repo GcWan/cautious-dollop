@@ -1,10 +1,14 @@
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 import search
+from game import game
 
 # export FLASK_APP
 app = Flask(__name__)
 
+# Initialize variables
+global players
+players = {}
 
 @app.route("/", methods=['GET', 'POST'])
 def sms_reply():
@@ -60,6 +64,12 @@ def sms_reply():
             resp.message(search.news(body[5:]))
         else:
             resp.message(search.news(""))
+    elif params[0].lower() == 'play':
+        if sender not in players:
+            players[sender] = game()
+        resp.message(players[sender].move(params))
+        if players[sender].getTurn() == 4:
+            del players[sender]
     else:
         resp.message("The Robots are coming! Head for the hills!")
 
