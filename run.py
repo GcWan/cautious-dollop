@@ -11,6 +11,7 @@ def sms_reply():
     """Respond to incoming calls with a simple text message."""
     # Get the message the user sent
     body = request.values.get('Body')
+    sender = request.values.get('From')
     params = body.split()
 
     # Start TwiML response
@@ -18,8 +19,11 @@ def sms_reply():
 
     # Add the message
     if params[0].lower() == 'google':
-        result = search.googleSearch(body[7:])
-        resp.message("Here is Google's top result:\n" + result)
+        if len(params) > 1:
+            result = search.google(body[7:])
+            resp.message("Here is Google's top result:\n" + result)
+        else:
+            resp.message("Please enter your search terms after 'google'.")
     elif params[0].lower() == 'translate':
         if len(params) >= 3:
             msg = search.translate(" ".join(params[2:]), params[1].lower())
@@ -33,16 +37,29 @@ def sms_reply():
                          "found at http://www.loc.gov/standards/iso639-2/php/code_list.php) "
                          "and TEXT is the message to be translated.")
     elif params[0].lower() == 'wiki':
-        result = search.wikiSearch(body[5:])
-        if len(result) < 1530:
-            resp.message("Information from Wikipedia:\n" + result)
-        else:
-            resp.message("Information from Wikipedia:\n" + result[:1525])
-            result = result[1525:]
-            while len(result) >= 1530:
-                resp.message(result[:1525])
+        if len(params) > 1:
+            result = search.wiki(body[5:])
+            if len(result) < 1530:
+                resp.message("Information from Wikipedia:\n" + result)
+            else:
+                resp.message("Information from Wikipedia:\n" + result[:1525])
                 result = result[1525:]
-            resp.message(result)
+                while len(result) >= 1530:
+                    resp.message(result[:1525])
+                    result = result[1525:]
+                resp.message(result)
+        else:
+            resp.message("Please enter your search terms after 'wiki'.")
+    elif params[0].lower() == 'weather':
+        if len(params) > 1:
+            resp.message(search.weather(body[8:]))
+        else:
+            resp.message(search.weather())
+    elif params[0].lower() == 'news':
+        if len(params) > 1:
+            resp.message(search.news(body[5:]))
+        else:
+            resp.message(search.news(""))
     else:
         resp.message("The Robots are coming! Head for the hills!")
 
