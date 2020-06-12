@@ -3,40 +3,6 @@ import requests
 from bs4 import BeautifulSoup
 from random import choice
 
-import os
-import pickle
-from game import game
-
-'''
-if not os.path.exists('database.pickle'):
-    open('database.pickle', 'x')
-test = {
-    "bob": 98,
-    "steve": 89,
-    "max": 50,
-    "game": game()
-}
-
-test['game'].move(["yes", "George"])
-test['game'].move(["yes", "George"])
-test['game'] = test['game']
-with open('database.pickle', 'wb') as file:
-    pickle.dump(test, file)
-
-database = pickle.load(open('database.pickle', 'rb'))
-print(database)
-print(test['game'].getTurn())
-print(test['game'].name)
-
-database['players'] = {}
-players = database['players']
-players['joying'] = 1
-players['george'] = 100
-players['non'] = 50
-del players['non']
-with open('database.json', 'w') as file:
-    json.dump(database, file)'''
-
 
 def google(query):
     for r in search(query, tld='ca', lang='en', num=1, start=0, stop=1, pause=2.0):
@@ -58,6 +24,7 @@ def translate(query, target):
         result = ""
     return result
 
+
 def wiki(query):
     link = "https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch={}&prop=info&inprop=url&format=json"\
         .format(query.replace(" ", "_"))
@@ -75,6 +42,7 @@ def wiki(query):
         extract += "..."
     return extract
 
+
 def weather(city="Burnaby"):
     url = "http://api.openweathermap.org/data/2.5/forecast?q={}&units=metric&APPID=6f68045e525e16f8232fb0e5f19987c4"\
         .format(city.replace(" ", "%20"))
@@ -89,7 +57,6 @@ def weather(city="Burnaby"):
                       "\nMaximum temperature: " + str(list['main']['temp_max']) + "ºC"
                       "\nMinimum temperature: " + str(list['main']['temp_min']) + "ºC")
     try:
-        response_text += "\nMore info at "
         link = "https://www.theweathernetwork.com/ca/search?q="
         link += city.replace(" ", "%20")
         webpage = requests.get(link)
@@ -98,10 +65,11 @@ def weather(city="Burnaby"):
         e = text[h:].find(">")
         r = text[h:h + e]
         link = "https://www.theweathernetwork.com" + r[6:-1]
-        response_text += link
+        response_text += "\nMore info at " + link
     except:
         pass
     return response_text
+
 
 def news(country):
     codes = {

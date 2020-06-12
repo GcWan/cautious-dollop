@@ -6,9 +6,9 @@ import os
 import pickle
 
 
-# Initialize file
+# Initialize database file
 if not os.path.exists('database.pickle'):
-    open('database.pickle', 'x')
+    pickle.dump({}, open('database.pickle', 'wb'))
 
 # export FLASK_APP
 app = Flask(__name__)
@@ -83,7 +83,7 @@ def sms_reply():
     else:
         resp.message("The Robots are coming! Head for the hills!")
 
-    # Update Database file
+    # Update database file
     with open('database.pickle', 'wb') as f:
         pickle.dump(database, f)
 
